@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj.Joystick;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -21,6 +22,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
+  public static Joystick driver = new Joystick(0);
+
   private RobotContainer m_robotContainer;
 
   /**
@@ -29,14 +32,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    Drivebase.init();
+    Motors.init();
     
     
-
-
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer();
   }
 
   /**
@@ -48,11 +46,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
-    // commands, running already-scheduled commands, removing finished or interrupted commands,
-    // and running subsystem periodic() methods.  This must be called from the robot's periodic
-    // block in order for anything in the Command-based framework to work.
-    CommandScheduler.getInstance().run();
+
   }
 
   /**
@@ -71,12 +65,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
   }
 
   /**
@@ -92,16 +81,62 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
-    }
   }
 
   /**
    * This function is called periodically during operator control.
    */
+
+  //Brownout prevention, limits how quickly the motors can change speed and/or direction. COURTESY NATHAN THANKS BUDDY
+    private static double safety(double cmdVal, double prevVal, double maxChange) {
+
+      double diff = cmdVal - prevVal;
+      if (Math.abs(diff) < maxChange) {
+        return cmdVal;
+      } else {
+        if (diff > 0) {
+          return prevVal + maxChange;
+        } else {
+          return prevVal - maxChange;
+        }
+      }
+    }
+      //drive smoothing, allows for better driving
+    
+      private static double smooth(double value, double deadBand, double max) {
+    
+      double aValue = Math.abs(value);
+      if (aValue > max)
+        return (value / aValue);
+      else if (aValue < deadBand)
+        return 0;
+      else
+        return aValue * aValue * (value / aValue);
+      }
+    
+      private static double prev_left = 0;
+      private static double prev_right = 0;
+      public static void drive(double l, double r){
+    
+          //write/copy in drive code smoothing and safety methods
+    
+          l = smooth(l, 0.02,0.9);
+          r = smooth(r,0.02,0.9);
+    
+          l = safety(l, prev_left, 0.3);
+          r = safety(r, prev_right, 0.3);
+    
+          Motors.left.set(l* 0.6);                  // multiplies left and right speed by number inbetween 0 and 1, speed modifiers can be implemented here later
+          Motors.right.set(r* 0.6);
+    
+          prev_left = l;
+          prev_right = r;
+    
+      }
+  
   @Override
   public void teleopPeriodic() {
+    drive(driver.getRawAxis(Logitech.AXIS_LEFTY), driver.getRawAxis(Logitech.AXIS_RIGHTY));
   }
 
   @Override
