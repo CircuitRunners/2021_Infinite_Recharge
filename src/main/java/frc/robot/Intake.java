@@ -2,14 +2,19 @@ package frc.robot;
 
 public class Intake {
 
-    // Gets the right and left bumper, returns forward on right bumper and backward on left bumper, 0.0 on neither
-    public static double getBumper(){
+    /**
+     * Returns the speed to set the bumper to
+     * @param RightBumper Whether the Right bumper is on
+     * @param LeftBumper Whether the Left bumper is on
+     * @return Returns a double in a certain direction depending on the bumper pressed if one is pressed
+     */
+    private static double getBumper(boolean RightBumper, boolean LeftBumper){
 
-        if(Robot.driver.getRawButton(Logitech.BTN_RIGHT_BUMPER)){
+        if(RightBumper){
             return 0.5;
         } else {
 
-        if(Robot.driver.getRawButton(Logitech.BTN_LEFT_BUMPER)){
+        if(LeftBumper){
             return -0.5;
         }
 
@@ -21,8 +26,12 @@ public class Intake {
     }
 
 
-
-    public static void intake(){
-        Motors.intakeGroup.set(getBumper());
+    /**
+     * Sets the actual intake motor
+     * @param RightBumper variable to pass through to the speed checker
+     * @param LeftBumper variable to pass through to the speed checker
+     */
+    public static void intake(boolean RightBumper, boolean LeftBumper){
+        Motors.intakeDrive.set(getBumper(RightBumper, LeftBumper));
     }
 }

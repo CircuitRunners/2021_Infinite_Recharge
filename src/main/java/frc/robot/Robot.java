@@ -7,7 +7,9 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.Talon;
+import frc.robot.Pneumatics;
+import frc.robot.Motors;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -23,6 +25,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   public static Joystick driver = new Joystick(0);
+  public static Joystick copilot = new Joystick(1);
 
   private RobotContainer m_robotContainer;
 
@@ -134,9 +137,23 @@ public class Robot extends TimedRobot {
     
       }
   
+  /**
+   * Runs every clock cycle in teleop.
+   * Drives the robot
+   * Runs the intake
+   * Runs the indexer
+   * Sets pneumatics
+   */
   @Override
   public void teleopPeriodic() {
     drive(driver.getRawAxis(Logitech.AXIS_LEFTY), driver.getRawAxis(Logitech.AXIS_RIGHTY));
+    
+    Intake.intake(Robot.driver.getRawButton(Logitech.BTN_RIGHT_BUMPER), Robot.driver.getRawButton(Logitech.BTN_LEFT_BUMPER));
+
+    Indexer.setIndexer(Robot.driver.getRawButtonPressed(Logitech.BTN_Y));
+
+    Pneumatics.setPneumatics(driver.getRawButtonPressed(Logitech.BTN_X));
+    Pneumatics.setCompressor(driver.getRawButtonPressed(Logitech.BTN_START));
   }
 
   @Override
@@ -152,3 +169,12 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {
   }
 }
+
+/**
+ * Buttons Used:
+ * X = turn on intake
+ * Left Stick Y Axis = Left motors
+ * Right Stick Y Axis = Right motors
+ * Start = Compressor
+ * Y = indexer
+ */
