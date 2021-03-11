@@ -27,6 +27,8 @@ public class Robot extends TimedRobot {
   public static Joystick driver = new Joystick(0);
   public static Joystick copilot = new Joystick(1);
 
+  public Pneumatics intakePneumatics = new Pneumatics();
+
   private RobotContainer m_robotContainer;
 
   /**
@@ -84,6 +86,7 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+
   }
 
   /**
@@ -150,10 +153,13 @@ public class Robot extends TimedRobot {
     
     Intake.intake(Robot.driver.getRawButton(Logitech.BTN_RIGHT_BUMPER), Robot.driver.getRawButton(Logitech.BTN_LEFT_BUMPER));
 
-    Indexer.setIndexer(Robot.driver.getRawButtonPressed(Logitech.BTN_Y));
+    Indexer.setIndexer(Robot.driver.getRawButton(Logitech.BTN_Y));
 
-    Pneumatics.setPneumatics(driver.getRawButtonPressed(Logitech.BTN_X));
-    Pneumatics.setCompressor(driver.getRawButtonPressed(Logitech.BTN_START));
+    Uptake.driveUptake(driver.getRawButton(Logitech.BTN_A), driver.getRawButton(Logitech.BTN_B));
+
+    intakePneumatics.setPneumatics(driver.getRawButtonPressed(Logitech.BTN_X));
+    intakePneumatics.setCompressor(driver.getRawButtonPressed(Logitech.BTN_START));
+
   }
 
   @Override
@@ -172,9 +178,13 @@ public class Robot extends TimedRobot {
 
 /**
  * Buttons Used:
+ * 
+ * Left Stick Y Axis = set Left motors
+ * Right Stick Y Axis = set Right motors
+ * Start = start compressor
+ * A = turn on uptake
+ * B = reverse turn on uptake
  * X = turn on intake
- * Left Stick Y Axis = Left motors
- * Right Stick Y Axis = Right motors
- * Start = Compressor
- * Y = indexer
+ * Y = turn on indexer
+ * 
  */

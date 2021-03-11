@@ -12,12 +12,15 @@ import edu.wpi.first.wpilibj.*;
 
 public class Motors{
 
-
+/**
+ * Creates all motor objects and miscellaneous other devices for pneumetics, etc.
+ */
 public static WPI_TalonFX left1,left2,right1,right2;
     public static SpeedControllerGroup left,right,intakeGroup;
     public static Solenoid intakeSolenoid;
     public static VictorSP intakeDrive;
     public static VictorSP indexerDrive;
+    public static VictorSP uptakeDrive;
     public static Compressor compressor;
     public static void init(){
 
@@ -26,8 +29,13 @@ public static WPI_TalonFX left1,left2,right1,right2;
         left2 = new WPI_TalonFX(1);
         right1 = new WPI_TalonFX(2);
         right2 = new WPI_TalonFX(3);
+
         intakeDrive = new VictorSP(4);
+
         indexerDrive = new VictorSP(5);
+
+        uptakeDrive = new VictorSP(6);
+
         intakeSolenoid = new Solenoid(5);
         compressor = new Compressor(0);
         

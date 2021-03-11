@@ -7,25 +7,41 @@ import frc.robot.Motors;
 
 public class Pneumatics {
 
+    Boolean compressorOn;
+    Boolean intakeOn;
+
+    public Pneumatics() {
+        compressorOn = false;
+        intakeOn = false;
+    }
+
     /**
      * Sets the solenoid for the intake pneumatics open and closed
-     * @param value whether the intake should be down or not
-     * 
-     * !!! FIX TO SET ON TOGGLE AND NOT EVERY TICK !!!
+     * @param toggle whether to toggle the intake pneumatics open / closed
      */
-	public static void setPneumatics(boolean value) {
-        Motors.intakeSolenoid.set(value);
+	public void setPneumatics(boolean toggle) {
+        if(toggle){
+            if(!intakeOn){
+
+                Motors.intakeSolenoid.set(true);
+            } else {
+
+                Motors.intakeSolenoid.set(false);
+            }
+        }
     }
     
     /**
      * Turns the compressor on and off
-     * @param on If the compressor should be on or not
+     * @param toggle Whether or not to toggle the compressor on / off
      */
-    public static void setCompressor(boolean on){
-        if(on){
-            Motors.compressor.start();
-        } else {
-            Motors.compressor.stop();
+    public void setCompressor(boolean toggle) {
+        if(toggle){
+            if(!compressorOn){
+                Motors.compressor.start();
+            } else {
+                Motors.compressor.stop();
+            }
         }
     }
 }
